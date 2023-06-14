@@ -1,5 +1,12 @@
 import styled from "styled-components";
+import getIssues from "../../apis/get-issue-api";
 const IssueDetailPage = () => {
+  const getData = async () => {
+    await getIssues("angular", "angular-cli", 10);
+  };
+
+  console.log(getData());
+
   return (
     <>
       <Container>
