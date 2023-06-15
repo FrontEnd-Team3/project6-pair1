@@ -9,6 +9,7 @@ function App() {
   if (process.env.NODE_ENV === "development") {
     worker.start();
   }
+
   return (
     <div className="App">
       <GlobalStyles />

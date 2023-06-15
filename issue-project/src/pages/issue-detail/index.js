@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import getIssues from "../../apis/get-issue-api";
 const IssueDetailPage = () => {
@@ -6,6 +7,10 @@ const IssueDetailPage = () => {
   };
 
   console.log(getData());
+  const navigate = useNavigate();
+  const backToMainPage = () => {
+    navigate("/");
+  };
 
   return (
     <>
@@ -26,7 +31,7 @@ const IssueDetailPage = () => {
         <IssueContent>본문</IssueContent>
       </Container>
       <div>
-        <GoBackBtn>{"< 뒤로 돌아가기"}</GoBackBtn>
+        <GoBackBtn onClick={backToMainPage}>{"< 뒤로 돌아가기"}</GoBackBtn>
       </div>
     </>
   );
