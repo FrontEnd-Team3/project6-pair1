@@ -12,6 +12,7 @@ function App() {
   if (process.env.NODE_ENV === "development") {
     worker.start();
   }
+
   return (
     <IssueListStoreProvider>
       <LoadingStoreProvider>
