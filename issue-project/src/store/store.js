@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { rootReducer } from "reducer";
+import { rootReducer } from "../reducer";
 import logger from "redux-logger";
 
 export const store = configureStore({

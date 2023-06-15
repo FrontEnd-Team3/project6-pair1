@@ -1,12 +1,18 @@
 import "./App.css";
-import IssueDetailPage from "./pages/issue-detail";
+
+import { RouterProvider } from "react-router-dom";
+import router from "./routes/routing";
+import { worker } from "./apis/handler";
 import GlobalStyles from "./styles/global";
 
 function App() {
+  if (process.env.NODE_ENV === "development") {
+    worker.start();
+  }
   return (
     <div className="App">
       <GlobalStyles />
-      <IssueDetailPage />
+      <RouterProvider router={router} />
     </div>
   );
 }
