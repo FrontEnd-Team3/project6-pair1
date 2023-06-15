@@ -1,3 +1,6 @@
-import { combineReducers } from "@reduxjs/toolkit";
 
-export const rootReducer = combineReducers({});
+import { combineReducers } from "redux";
+import { issueSlice } from "./issue";
+
+export const rootReducer = combineReducers({ issue: issueSlice.reducer });
+
