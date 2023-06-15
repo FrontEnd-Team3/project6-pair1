@@ -2,11 +2,6 @@ import { useNavigate, useParams } from "react-router";
 import styled from "styled-components";
 import { useOneIssue } from "../../contexts/one-issue";
 const IssueDetailPage = () => {
-  // const getData = async () => {
-  //   await getIssues("angular", "angular-cli", 10);
-  // };
-  // console.log(getData());
-
   const navigate = useNavigate();
   const handlePageChange = () => {
     navigate("/");
