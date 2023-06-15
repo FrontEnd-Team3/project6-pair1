@@ -1,9 +1,17 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import getIssues from "../../apis/issue.data";
+import { useLoading } from "../../contexts/loading";
+import LoadingPage from "../loading";
+import IssueList from "./list";
+import { useIssueList } from "../../contexts/issueList";
+import styled from "styled-components";
 
 const IssueMainPage = () => {
+  const { loading, setLoading } = useLoading();
+  // const { issueList, setIssueList } = useIssueList();
   const [issueList, setIssueList] = useState([]);
+
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -18,17 +26,26 @@ const IssueMainPage = () => {
   useEffect(() => {
     const fetchIssueList = async () => {
       try {
-        const res = await getIssues("angular", "angular-cli");
-        const formattedIssueList = res.map((issue) => ({
-          id: issue.id,
-          number: issue.number,
-          title: issue.title,
-          date: issue.created_at,
-          updateDate: issue.updated_at,
-          commentCount: issue.comments,
-        }));
-        setIssueList(formattedIssueList);
-        console.log(issueList);
+        setLoading(true);
+        setTimeout(async () => {
+          const res = await getIssues("angular", "angular-cli").then(
+            setLoading(false)
+          );
+          console.log("res", res);
+          const formattedIssueList = res.map((issue) => ({
+            id: issue.id,
+            number: issue.number,
+            title: issue.title,
+            date: issue.created_at,
+            updateDate: issue.updated_at,
+            commentCount: issue.comments,
+            profileURL: issue.user.avatar_url,
+            userName: issue.user.login,
+            content: issue.body,
+          }));
+          setIssueList(formattedIssueList);
+          console.log("issueList", issueList);
+        }, 3000);
       } catch (err) {
         console.error(err);
       }
@@ -89,67 +106,84 @@ const IssueMainPage = () => {
   return (
     <div>
       <div>
-        <label>
+        <Select>
           정렬:{" "}
           <select value={sortOption} onChange={handleSortOptionChange}>
             <option value="created">생성순</option>
             <option value="updated">업데이트순</option>
             <option value="comments">댓글순</option>
           </select>
-        </label>
-        <label>
+        </Select>
+        <Select>
           보기:{" "}
           <select value={itemsPerPage} onChange={handleItemsPerPageChange}>
             <option value={10}>10개 씩 보기</option>
             <option value={20}>20개 씩 보기</option>
             <option value={50}>50개 씩 보기</option>
           </select>
-        </label>
+        </Select>
       </div>
       <div>
-        {displayedIssues.map((issue) => (
-          <li key={issue.id}>
-            <div>번호: {issue.number}</div>
-            <div>제목: {issue.title}</div>
-            <div>ID: {issue.id}</div>
-            <div>날짜: {issue.date}</div>
-            <div>댓글 수: {issue.commentCount}</div>
-          </li>
-        ))}
+        {loading ? (
+          <LoadingPage />
+        ) : (
+          <IssueList displayedIssues={displayedIssues} />
+        )}
       </div>
       <div>
-        <button onClick={() => handlePageClick(1)} disabled={currentPage === 1}>
+        <LastBtn
+          onClick={() => handlePageClick(1)}
+          disabled={currentPage === 1}
+        >
           맨처음
-        </button>
-        <button
+        </LastBtn>
+        <LastBtn
           onClick={() => handlePageClick(currentPage - 1)}
           disabled={currentPage === 1}
         >
           이전
-        </button>
+        </LastBtn>
         {[...Array(totalPages)].map((_, index) => {
           const pageNumber = index + 1;
           return (
-            <button key={index} onClick={() => handlePageClick(pageNumber)}>
+            <PageBtn key={index} onClick={() => handlePageClick(pageNumber)}>
               {pageNumber}
-            </button>
+            </PageBtn>
           );
         })}
-        <button
+        <LastBtn
           onClick={() => handlePageClick(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
           다음
-        </button>
-        <button
+        </LastBtn>
+        <LastBtn
           onClick={() => handlePageClick(totalPages)}
           disabled={currentPage === totalPages}
         >
           맨끝
-        </button>
+        </LastBtn>
       </div>
     </div>
   );
 };
 
 export default IssueMainPage;
+
+const Select = styled.label`
+  color: white;
+  margin: 20px;
+  select {
+    color: black;
+  }
+`;
+
+const LastBtn = styled.button`
+  width: 50px;
+  height: 20px;
+`;
+
+const PageBtn = styled.button`
+  width: 50px;
+  height: 20px;
+`;
