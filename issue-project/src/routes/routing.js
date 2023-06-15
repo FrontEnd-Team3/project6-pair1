@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import IssueDetailPage from "../pages/issue-detail";
 
 import IssueMainPage from "../pages/main";
+import IssueDetailPage from "../pages/issue-detail";
 
 const router = createBrowserRouter([
   {
@@ -9,7 +10,7 @@ const router = createBrowserRouter([
     element: <IssueMainPage />,
   },
   {
-    path: "/detail",
+    path: "/detail/:id",
     element: <IssueDetailPage />,
   },
 ]);

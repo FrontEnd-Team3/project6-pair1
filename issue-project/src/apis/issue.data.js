@@ -8,7 +8,7 @@ const getIssues = async (owner, repo) => {
     const res = await octokit.request(`GET /repos/${owner}/${repo}/issues`, {
       owner,
       repo,
-      per_page: 50,
+      per_page: 200,
       sort: "updated",
       direction: "asc",
       headers: {

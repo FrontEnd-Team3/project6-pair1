@@ -5,7 +5,7 @@ const GlobalStyles = createGlobalStyle`
     ${reset}
     *{
         box-sizing: border-box;
-        color: white
+        list-style: none;
     }
     body{
         background-color: black;

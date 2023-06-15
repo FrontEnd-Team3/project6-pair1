@@ -1,37 +1,53 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 import styled from "styled-components";
-import getIssues from "../../apis/get-issue-api";
+import { useOneIssue } from "../../contexts/one-issue";
 const IssueDetailPage = () => {
-  const getData = async () => {
-    await getIssues("angular", "angular-cli", 10);
-  };
+  // const getData = async () => {
+  //   await getIssues("angular", "angular-cli", 10);
+  // };
+  // console.log(getData());
 
-  console.log(getData());
   const navigate = useNavigate();
-  const backToMainPage = () => {
+  const handlePageChange = () => {
     navigate("/");
   };
+
+  const { oneIssue } = useOneIssue();
+  const params = useParams();
+  const issueId = params.id;
+  console.log(params.id);
+
+  console.log(oneIssue);
+  const imageURL = oneIssue.profileURL;
 
   return (
     <>
       <Container>
         <ImgContainer>
-          <ProfileImg alt="img" src="FakeProfile.jpg" />
+          <ProfileImg alt="img" src={imageURL} />
         </ImgContainer>
-        <UserID>Clydin</UserID>
+        <UserID>{oneIssue.userName}</UserID>
         <IssueDetail>
-          <p>
-            <IssueNumber>#16980</IssueNumber>:{" "}
-            <span>Yarn Pnp Support Status</span>
-          </p>
-          <p>
-            <span>작성일</span> / <span>코멘트 수</span>
-          </p>
+          <div>
+            <span>Create At: </span>
+            {oneIssue.date}
+            <span>Comment</span>
+            {oneIssue.commentCount}
+          </div>
+          <DivisionLine />
+          <div>
+            <IssueNumber>#{issueId}</IssueNumber>
+            <IssueTitle>{oneIssue.title}</IssueTitle>
+          </div>
         </IssueDetail>
-        <IssueContent>본문</IssueContent>
+        <IssueContent>
+          <span>{oneIssue.content}</span>
+        </IssueContent>
       </Container>
       <div>
-        <GoBackBtn onClick={backToMainPage}>{"< 뒤로 돌아가기"}</GoBackBtn>
+        <GoBackBtn onClick={() => handlePageChange()}>
+          {"< 뒤로 돌아가기"}
+        </GoBackBtn>
       </div>
     </>
   );
@@ -41,16 +57,18 @@ export default IssueDetailPage;
 
 const Container = styled.div`
   background-color: lightgray;
-  height: 520px;
+  height: transparent;
   width: 900px;
   position: absolute;
   top: 100px;
   left: 550px;
+  * {
+    color: black;
+  }
 `;
 
 const ImgContainer = styled.div`
   margin-top: 19px;
-  padding-left: 750px;
 `;
 
 const ProfileImg = styled.img`
@@ -61,45 +79,62 @@ const ProfileImg = styled.img`
 
 const UserID = styled.div`
   text-align: right;
-  margin-right: 32px;
+  text-align: center;
   margin-top: 15px;
   font-size: 20px;
   font-weight: bold;
 `;
 
 const IssueDetail = styled.div`
+  height: 150px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: space-around;
   font-size: 16px;
-  margin: 15px 32px;
+  span {
+    font-weight: bold;
+    margin: 10px;
+  }
 `;
 
-const IssueNumber = styled.span`
+const IssueNumber = styled.div`
   font-weight: bold;
+  margin-bottom: 10px;
+`;
+
+const IssueTitle = styled.div`
+  padding-left: 10px;
 `;
 
 const IssueContent = styled.div`
   background-color: white;
   width: 830px;
-  height: 300px;
+  height: transparent;
   margin-left: 35px;
-  margin-top: 10px;
+  margin-bottom: 25px;
   padding: 20px;
   text-align: left;
   font-size: 12px;
   font-weight: 100;
+  line-height: 20px;
+  text-align: center;
 `;
 
 const GoBackBtn = styled.button`
-  color: white;
   border: none;
   background-color: transparent;
+  color: white;
   font-size: 20px;
   font-weight: 100;
   :hover {
     text-decoration: underline solid 1px white;
   }
   position: absolute;
-  bottom: 50px;
+  bottom: 5px;
   right: 450px;
+`;
+
+const DivisionLine = styled.hr`
+  border: 1px solid black;
+  width: 80%;
 `;
