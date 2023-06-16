@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import getIssues from "../../apis/issue.data";
 import { useLoading } from "../../contexts/loading";
 import LoadingPage from "../loading";
 import IssueList from "./list";
-import { useIssueList } from "../../contexts/issueList";
 import styled from "styled-components";
+import AuthApi from "../../apis/auth.api";
+import { useDispatch } from "react-redux";
 
 const IssueMainPage = () => {
   const { loading, setLoading } = useLoading();
@@ -23,16 +23,19 @@ const IssueMainPage = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [sortOption, setSortOption] = useState("created");
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const fetchIssueList = async () => {
       try {
         setLoading(true);
         setTimeout(async () => {
-          const res = await getIssues("angular", "angular-cli").then(
+          const res = await AuthApi.getData("angular", "angular-cli").then(
             setLoading(false)
           );
+          // const res = dispatch(getIssues())
           console.log("res", res);
-          const formattedIssueList = res.map((issue) => ({
+          const formattedIssueList = res.data.map((issue) => ({
             id: issue.id,
             number: issue.number,
             title: issue.title,
