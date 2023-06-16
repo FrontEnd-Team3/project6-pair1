@@ -41,4 +41,9 @@ const Issue = styled.li`
   flex-direction: column;
   justify-content: center;
   padding: 0 10px;
+  overflow: hidden;
+  transition: all 0.2s linear;
+  :hover {
+    transform: scale(1.05);
+  }
 `;
