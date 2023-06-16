@@ -6,6 +6,7 @@ import LoadingPage from "../loading";
 import IssueList from "./list";
 import { useIssueList } from "../../contexts/issueList";
 import styled from "styled-components";
+import AuthApi from "../../apis/auth.api";
 
 const IssueMainPage = () => {
   const { loading, setLoading } = useLoading();
@@ -28,11 +29,11 @@ const IssueMainPage = () => {
       try {
         setLoading(true);
         setTimeout(async () => {
-          const res = await getIssues("angular", "angular-cli").then(
+          const res = await AuthApi.getData("angular", "angular-cli").then(
             setLoading(false)
           );
           console.log("res", res);
-          const formattedIssueList = res.map((issue) => ({
+          const formattedIssueList = res.data.map((issue) => ({
             id: issue.id,
             number: issue.number,
             title: issue.title,
