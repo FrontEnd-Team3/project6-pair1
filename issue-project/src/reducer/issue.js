@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import AuthApi from "../apis/auth.api";
 
 const initialState = {
-  issues: [],
+  issueList: [],
   getIssueState: {
     loading: false,
     done: false,
@@ -11,7 +11,7 @@ const initialState = {
 };
 
 export const issueSlice = createSlice({
-  name: "issue",
+  name: "issueList",
   initialState,
   extraReducers: (builder) => {
     builder.addCase(getIssues.pending, (state) => {
@@ -20,6 +20,7 @@ export const issueSlice = createSlice({
       state.getIssueState.err = null;
     });
     builder.addCase(getIssues.fulfilled, (state, action) => {
+      state.issueList = action.payload;
       state.getIssueState.loading = false;
       state.getIssueState.done = true;
       state.getIssueState.err = null;
@@ -34,10 +35,9 @@ export const issueSlice = createSlice({
 });
 
 export const getIssues = createAsyncThunk(
-  // URL
+  "issue/getIssues",
   async ({ owner, repo }) => {
     try {
-      console.log("data", owner, repo);
       const res = await AuthApi.getData(owner, repo);
       return res.data;
     } catch (err) {

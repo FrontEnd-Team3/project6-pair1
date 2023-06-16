@@ -5,12 +5,14 @@ import LoadingPage from "../loading";
 import IssueList from "./list";
 import styled from "styled-components";
 import AuthApi from "../../apis/auth.api";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getIssues } from "../../reducer/issue";
+import { useIssueList } from "../../contexts/issueList";
 
 const IssueMainPage = () => {
-  const { loading, setLoading } = useLoading();
-  // const { issueList, setIssueList } = useIssueList();
-  const [issueList, setIssueList] = useState([]);
+  // const { loading, setLoading } = useLoading();
+  const { issueList, setIssueList } = useIssueList();
+  const targetList = useSelector((state) => state.issue.issueList);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -24,37 +26,43 @@ const IssueMainPage = () => {
   const [sortOption, setSortOption] = useState("created");
 
   const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.issue.getIssueState);
 
   useEffect(() => {
     const fetchIssueList = async () => {
       try {
-        setLoading(true);
-        setTimeout(async () => {
-          const res = await AuthApi.getData("angular", "angular-cli").then(
-            setLoading(false)
-          );
-          // const res = dispatch(getIssues())
-          console.log("res", res);
-          const formattedIssueList = res.data.map((issue) => ({
-            id: issue.id,
-            number: issue.number,
-            title: issue.title,
-            date: issue.created_at,
-            updateDate: issue.updated_at,
-            commentCount: issue.comments,
-            profileURL: issue.user.avatar_url,
-            userName: issue.user.login,
-            content: issue.body,
-          }));
-          setIssueList(formattedIssueList);
-          console.log("issueList", issueList);
-        }, 3000);
+        // setLoading(true);
+        // setTimeout(async () => {
+        //   const res = await AuthApi.getData("angular", "angular-cli").then(
+        //     setLoading(false)
+        //   );
+        const res = dispatch(
+          getIssues({ owner: "angular", repo: "angular-cli" })
+        );
+        console.log("res", res);
+        // }, 3000);
       } catch (err) {
         console.error(err);
       }
     };
     fetchIssueList();
   }, []);
+
+  useEffect(() => {
+    const formattedIssueList = targetList.map((issue) => ({
+      id: issue.id,
+      number: issue.number,
+      title: issue.title,
+      date: issue.created_at,
+      updateDate: issue.updated_at,
+      commentCount: issue.comments,
+      profileURL: issue.user.avatar_url,
+      userName: issue.user.login,
+      content: issue.body,
+    }));
+    setIssueList(formattedIssueList);
+    console.log("issueList", issueList);
+  }, [targetList]);
 
   useEffect(() => {
     setCurrentPage(pageNumberFromURL ? parseInt(pageNumberFromURL) : 1);
