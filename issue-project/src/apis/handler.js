@@ -1,5 +1,6 @@
-import getIssues from "./issue.data";
 import { setupWorker } from "msw";
+import * as authAPI from "./auth.api";
 
-const hanlder = [...Object.values(getIssues)];
-export const worker = setupWorker(...hanlder);
+const handler = [...Object.values(authAPI)];
+
+export const worker = setupWorker(...handler);
