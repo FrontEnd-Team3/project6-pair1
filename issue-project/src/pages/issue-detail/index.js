@@ -1,67 +1,80 @@
 import { useNavigate, useParams } from "react-router";
 import styled from "styled-components";
-import { useOneIssue } from "../../contexts/one-issue";
+import { useSelector } from "react-redux";
+import { useState } from "react";
 const IssueDetailPage = () => {
-  // const getData = async () => {
-  //   await getIssues("angular", "angular-cli", 10);
-  // };
-  // console.log(getData());
-
   const navigate = useNavigate();
   const handlePageChange = () => {
     navigate("/");
   };
 
-  const { oneIssue } = useOneIssue();
   const params = useParams();
   const issueId = params.id;
-  console.log(params.id);
+  console.log("targetId", params.id);
 
-  console.log(oneIssue);
-  const imageURL = oneIssue.profileURL;
+  // param의 id와 값 일치하는 데이터 받아오기
+  const issueList = useSelector((state) => state.issue.issueList);
+  const target = [...issueList].find((el) => el.id === parseInt(issueId));
+  console.log("target", target);
+
+  const imageURL = target.user.avatar_url;
+  console.log("image", imageURL);
+
+  // 게시물 내용 더보기
+  const [isEveryContents, setIsEveryContents] = useState(false);
+  const handleShowMoreContents = () => {
+    setIsEveryContents((prev) => !prev);
+  };
 
   return (
-    <>
+    <Box>
       <Container>
         <ImgContainer>
           <ProfileImg alt="img" src={imageURL} />
         </ImgContainer>
-        <UserID>{oneIssue.userName}</UserID>
+        <UserID>{target.user.login}</UserID>
         <IssueDetail>
           <div>
-            <span>Create At: </span>
-            {oneIssue.date}
-            <span>Comment</span>
-            {oneIssue.commentCount}
+            <span>DATE: </span>
+            {target.updated_at}
+            <span>COMMENTS</span>
+            {target.comments}
           </div>
           <DivisionLine />
           <div>
-            <IssueNumber>#{issueId}</IssueNumber>
-            <IssueTitle>{oneIssue.title}</IssueTitle>
+            <IssueTitle>{target.title}</IssueTitle>
           </div>
         </IssueDetail>
-        <IssueContent>
-          <span>{oneIssue.content}</span>
-        </IssueContent>
+        <IssueContentContainer isEveryContents={isEveryContents}>
+          <div>{target.body}</div>
+          <button onClick={handleShowMoreContents}>
+            {isEveryContents ? "줄이기" : "더보기"}
+          </button>
+        </IssueContentContainer>
+        <BtnContainer>
+          <GoBackBtn onClick={() => handlePageChange()}>
+            {"Back to Main Page"}
+          </GoBackBtn>
+        </BtnContainer>
       </Container>
-      <div>
-        <GoBackBtn onClick={() => handlePageChange()}>
-          {"< 뒤로 돌아가기"}
-        </GoBackBtn>
-      </div>
-    </>
+    </Box>
   );
 };
 
 export default IssueDetailPage;
 
+const Box = styled.div`
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
 const Container = styled.div`
+  flex-grow: 2;
   background-color: lightgray;
-  height: transparent;
   width: 900px;
-  position: absolute;
-  top: 100px;
-  left: 550px;
+  margin-left: 500px;
+  margin-top: 55px;
   * {
     color: black;
   }
@@ -97,16 +110,11 @@ const IssueDetail = styled.div`
   }
 `;
 
-const IssueNumber = styled.div`
-  font-weight: bold;
-  margin-bottom: 10px;
-`;
-
 const IssueTitle = styled.div`
   padding-left: 10px;
 `;
 
-const IssueContent = styled.div`
+const IssueContentContainer = styled.div`
   background-color: white;
   width: 830px;
   height: transparent;
@@ -118,20 +126,37 @@ const IssueContent = styled.div`
   font-weight: 100;
   line-height: 20px;
   text-align: center;
+  div {
+    display: block;
+    text-overflow: ellipsis;
+    white-space: ${({ isEveryContents }) =>
+      isEveryContents ? "normal" : "nowrap"};
+    overflow: ${({ isEveryContents }) =>
+      isEveryContents ? "visible" : "hidden"};
+  }
+  button {
+    margin-top: 10px;
+  }
+`;
+
+const BtnContainer = styled.div`
+  margin: 10px 100px;
+  margin-bottom: 20px;
 `;
 
 const GoBackBtn = styled.button`
   border: none;
-  background-color: transparent;
-  color: white;
-  font-size: 20px;
+  background-color: white;
+  color: black;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 12px;
   font-weight: 100;
   :hover {
-    text-decoration: underline solid 1px white;
+    text-decoration: underline solid 1px black;
   }
-  position: absolute;
-  bottom: 5px;
-  right: 450px;
+  position: relative;
+  bottom: 0px;
 `;
 
 const DivisionLine = styled.hr`

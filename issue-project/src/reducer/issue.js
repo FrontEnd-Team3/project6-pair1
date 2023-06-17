@@ -30,9 +30,10 @@ export const issueSlice = createSlice({
       state.getIssueState.done = false;
       state.getIssueState.err = action.payload;
     });
-    // });
   },
 });
+
+export const { filterIssueList } = issueSlice.actions;
 
 export const getIssues = createAsyncThunk(
   "issue/getIssues",
