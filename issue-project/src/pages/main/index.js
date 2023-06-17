@@ -4,7 +4,7 @@ import { useLoading } from "../../contexts/loading";
 import LoadingPage from "../loading";
 import IssueList from "./list";
 import styled from "styled-components";
-import AuthApi from "../../apis/auth.api";
+
 import { useDispatch, useSelector } from "react-redux";
 import { getIssues } from "../../reducer/issue";
 import { useIssueList } from "../../contexts/issueList";
@@ -17,6 +17,7 @@ const IssueMainPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
+
   const pageNumberFromURL = searchParams.get("page");
   const filterFromURL = searchParams.get("filter");
   const itemsPerPageFromURL = searchParams.get("items");
@@ -77,8 +78,10 @@ const IssueMainPage = () => {
   }, [itemsPerPageFromURL, location.search]);
 
   const handlePageClick = (newPage) => {
+    if (currentPage === newPage) return;
+    window.scrollTo({ top: 0, behavior: "smooth" });
     setCurrentPage(newPage);
-    navigate(`?page=${newPage}&filter=${sortOption}`);
+    navigate(`?page=${newPage}&filter=${sortOption}&items=${itemsPerPage}`);
   };
 
   const paginateIssues = (issues) => {
@@ -89,12 +92,14 @@ const IssueMainPage = () => {
 
   const handleItemsPerPageChange = (event) => {
     setItemsPerPage(parseInt(event.target.value));
-    navigate(`?page=1&filter=${sortOption}`);
+    setCurrentPage(1); // 현재 페이지를 1로 설정
+    navigate(`?page=1&filter=${sortOption}&items=${event.target.value}`);
   };
 
   const handleSortOptionChange = (event) => {
     setSortOption(event.target.value);
-    navigate(`?page=${currentPage}&filter=${event.target.value}`);
+    setCurrentPage(1);
+    navigate(`?page=1&filter=${event.target.value}&items=${itemsPerPage}`);
   };
 
   const sortIssues = (issues) => {
@@ -157,7 +162,11 @@ const IssueMainPage = () => {
         {[...Array(totalPages)].map((_, index) => {
           const pageNumber = index + 1;
           return (
-            <PageBtn key={index} onClick={() => handlePageClick(pageNumber)}>
+            <PageBtn
+              key={index}
+              onClick={() => handlePageClick(pageNumber)}
+              isSelected={currentPage === pageNumber}
+            >
               {pageNumber}
             </PageBtn>
           );
@@ -197,4 +206,5 @@ const LastBtn = styled.button`
 const PageBtn = styled.button`
   width: 50px;
   height: 20px;
+  background-color: ${({ isSelected }) => (isSelected ? "blue" : "grey")};
 `;
