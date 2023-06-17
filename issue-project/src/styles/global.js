@@ -7,7 +7,11 @@ const GlobalStyles = createGlobalStyle`
         box-sizing: border-box;
         list-style: none;
     }
+    html{
+        height: 100%;
+    }
     body{
+        height: 100%;
         background-color: #0E1117;
     }
     button {
