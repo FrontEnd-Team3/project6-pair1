@@ -8,7 +8,7 @@ const GlobalStyles = createGlobalStyle`
         list-style: none;
     }
     body{
-        background-color: black;
+        background-color: #0E1117;
     }
     button {
         border: none;

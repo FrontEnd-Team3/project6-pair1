@@ -52,6 +52,7 @@ const IssueMainPage = () => {
   useEffect(() => {
     const formattedIssueList = targetList.map((issue) => ({
       id: issue.id,
+      userId: issue.twitter_username,
       number: issue.number,
       title: issue.title,
       date: issue.created_at,
@@ -60,6 +61,7 @@ const IssueMainPage = () => {
       profileURL: issue.user.avatar_url,
       userName: issue.user.login,
       content: issue.body,
+      taskDone: issue.taskDone,
     }));
     setIssueList(formattedIssueList);
     console.log("issueList", issueList);
