@@ -56,7 +56,6 @@ const IssueMainPage = () => {
       userName: issue.user.login,
       content: issue.body,
       labels: issue.labels,
-
     }));
     setIssueList(formattedIssueList);
     // dispatch(filterIssueList(formattedIssueList))
@@ -120,7 +119,7 @@ const IssueMainPage = () => {
   return (
     <div>
       <SelectForm>
-        <Select>
+        <Select style={{ marginRight: "10px" }}>
           SORT{" "}
           <select value={sortOption} onChange={handleSortOptionChange}>
             <option value="created">CREATE</option>
@@ -189,16 +188,21 @@ const IssueMainPage = () => {
 export default IssueMainPage;
 
 const Pagenation = styled.div`
-  margin-left: 275px;
   margin-top: 40px;
   margin-bottom: 40px;
   display: flex;
   justify-content: center;
+  @media (max-width: 767px) {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+  }
 `;
 
 const SelectForm = styled.div`
-  margin-left: 680px;
-  margin-top: 20px
+  margin-left: 5vw;
+  margin-top: 20px;
   margin-bottom: 20px;
 `;
 
@@ -227,6 +231,12 @@ const LastBtn = styled.button`
   :hover {
     background-color: rgb(90, 83, 83);
   }
+  @media (max-width: 767px) {
+    width: 45px;
+    height: 20px;
+    font-size: 12px;
+    text-align: center;
+  }
 `;
 
 const PageBtn = styled.button`
@@ -243,4 +253,10 @@ const PageBtn = styled.button`
       isSelected ? "white" : "rgb(90, 83, 83)"};
   }
 
+  @media (max-width: 767px) {
+    width: 45px;
+    height: 20px;
+    font-size: 12px;
+    text-align: center;
+  }
 `;
