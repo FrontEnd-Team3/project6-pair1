@@ -72,7 +72,7 @@ const OneIssue = ({ issue }) => {
     </Issue>
   );
 };
-
+/* 수정중 */
 export default OneIssue;
 
 const Label = styled.span`
