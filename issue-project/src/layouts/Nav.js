@@ -1,6 +1,5 @@
 import React from "react";
 import "./Nav.css";
-import styled from "styled-components";
 
 function Nav() {
   return (
@@ -14,16 +13,3 @@ function Nav() {
 }
 
 export default Nav;
-
-// const NavContainer = styled.nav`
-//   width: 350px;
-//   position: absolute;
-//   top: 100px;
-//   left: 10px;
-
-//   @media (max-width: 800px) {
-//     * {
-//       display: none;
-//     }
-//   }
-// `;

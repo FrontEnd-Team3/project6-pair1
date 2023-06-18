@@ -1,7 +1,11 @@
 import { useNavigate, useParams } from "react-router";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+
 const IssueDetailPage = () => {
   const navigate = useNavigate();
   const handlePageChange = () => {
@@ -20,10 +24,22 @@ const IssueDetailPage = () => {
   const imageURL = target.user.avatar_url;
   console.log("image", imageURL);
 
-  // 게시물 내용 더보기
-  const [isEveryContents, setIsEveryContents] = useState(false);
-  const handleShowMoreContents = () => {
-    setIsEveryContents((prev) => !prev);
+  // markdown 문법 수정
+  // 주석 삭제
+  const removeHtmlComments = () => {
+    const visitor = (node) => {
+      if (
+        node.type === "html" &&
+        node.value.startsWith("<!--") &&
+        node.value.endsWith("-->")
+      ) {
+        return null;
+      }
+    };
+
+    return (tree) => {
+      tree.children = tree.children.filter((child) => visitor(child) !== null);
+    };
   };
 
   return (
@@ -34,22 +50,63 @@ const IssueDetailPage = () => {
         </ImgContainer>
         <UserID>{target.user.login}</UserID>
         <IssueDetail>
-          <div>
-            <span>DATE: </span>
-            {target.updated_at}
-            <span>COMMENTS</span>
-            {target.comments}
-          </div>
-          <DivisionLine />
-          <div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
             <IssueTitle>{target.title}</IssueTitle>
+            <IssueNumber>#{target.number}</IssueNumber>
           </div>
+          <DetailTop>
+            <StateBox>{target.state}</StateBox>
+            <div>
+              <span>opened this issue on</span>
+              {target.updated_at.split("T")[0]}
+            </div>
+            <div>|</div>
+            <div>
+              {target.comments}
+              <span>comments</span>
+            </div>
+          </DetailTop>
         </IssueDetail>
-        <IssueContentContainer isEveryContents={isEveryContents}>
-          <div>{target.body}</div>
-          <button onClick={handleShowMoreContents}>
-            {isEveryContents ? "줄이기" : "더보기"}
-          </button>
+        <IssueContentContainer>
+          <div>
+            <ReactMarkdown
+              children={target.body}
+              transformLinkUri={(uri) => uri.replace(/<!--.*?-->/g, "")}
+              remarkPlugins={[remarkGfm, removeHtmlComments]}
+              components={{
+                pre: ({ node, children, ...props }) => (
+                  <pre
+                    {...props}
+                    children={String(children).replace(/\n$/, "")}
+                    style={{
+                      borderLeft: "5px solid skyblue",
+                      padding: "2rem",
+                      lineHeight: "1.5rem",
+                      margin: "2rem auto",
+                    }}
+                  >
+                    {children}
+                  </pre>
+                ),
+                code({ node, inline, className, children, ...props }) {
+                  const match = /language-(\w+)/.exec(className || "");
+                  return !inline && match ? (
+                    <SyntaxHighlighter
+                      {...props}
+                      children={String(children).replace(/\n$/, "")}
+                      style={a11yDark}
+                      language={match[1]}
+                      PreTag="div"
+                    />
+                  ) : (
+                    <code {...props} className={className}>
+                      {children}
+                    </code>
+                  );
+                },
+              }}
+            />
+          </div>
         </IssueContentContainer>
         <BtnContainer>
           <GoBackBtn onClick={() => handlePageChange()}>
@@ -72,8 +129,8 @@ const Box = styled.div`
 const Container = styled.div`
   flex-grow: 2;
   background-color: lightgray;
-  width: 900px;
-  margin-left: 500px;
+  width: 59vw;
+  margin-left: 30vw;
   margin-top: 55px;
   * {
     color: black;
@@ -94,8 +151,8 @@ const UserID = styled.div`
   text-align: right;
   text-align: center;
   margin-top: 15px;
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 13px;
+  font-weight: 500;
 `;
 
 const IssueDetail = styled.div`
@@ -105,34 +162,50 @@ const IssueDetail = styled.div`
   justify-content: space-around;
   font-size: 16px;
   span {
-    font-weight: bold;
     margin: 10px;
+  }
+`;
+
+const DetailTop = styled.div`
+  display: flex;
+  justify-content: center;
+  font-weight: 100;
+  * {
+    margin-right: 1vw;
+    margin-top: -40px;
+  }
+  div {
+    line-height: 20px;
   }
 `;
 
 const IssueTitle = styled.div`
   padding-left: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  margin-right: 1vw;
+`;
+
+const IssueNumber = styled.div`
+  font-weight: 100;
+  color: gray;
+  font-size: 24px;
 `;
 
 const IssueContentContainer = styled.div`
   background-color: white;
-  width: 830px;
+  width: 54vw;
   height: transparent;
-  margin-left: 35px;
+  margin-left: 2.5vw;
   margin-bottom: 25px;
   padding: 20px;
   text-align: left;
   font-size: 12px;
   font-weight: 100;
   line-height: 20px;
-  text-align: center;
   div {
     display: block;
-    text-overflow: ellipsis;
-    white-space: ${({ isEveryContents }) =>
-      isEveryContents ? "normal" : "nowrap"};
-    overflow: ${({ isEveryContents }) =>
-      isEveryContents ? "visible" : "hidden"};
+    overflow: visible;
   }
   button {
     margin-top: 10px;
@@ -159,7 +232,14 @@ const GoBackBtn = styled.button`
   bottom: 0px;
 `;
 
-const DivisionLine = styled.hr`
-  border: 1px solid black;
-  width: 80%;
+const StateBox = styled.div`
+  background-color: #1f883d;
+  color: white;
+  width: 80.63px;
+  height: 32px;
+  padding: 5px 12px;
+  padding-bottom: 10px;
+  font-size: 16px;
+  font-weight: 200;
+  border-radius: 2em;
 `;
