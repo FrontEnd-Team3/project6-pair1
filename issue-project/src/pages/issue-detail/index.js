@@ -25,6 +25,7 @@ const IssueDetailPage = () => {
   console.log("image", imageURL);
 
   // markdown 문법 수정
+  // 주석 삭제
   const removeHtmlComments = () => {
     const visitor = (node) => {
       if (
