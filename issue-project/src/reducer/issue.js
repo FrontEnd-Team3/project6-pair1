@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Octokit } from "@octokit/core";
+import AuthApi from "../apis/auth.api";
 
 const initialState = {
-  issues: [],
+  issueList: [],
   getIssueState: {
     loading: false,
     done: false,
@@ -11,21 +11,16 @@ const initialState = {
 };
 
 export const issueSlice = createSlice({
-  name: "issue",
+  name: "issueList",
   initialState,
-  reducers: {
-    // addTodo(state, action) {
-    //   state.todos.unshift(action.payload);
-    // },
-  },
   extraReducers: (builder) => {
-    // 로딩 상태일 때
     builder.addCase(getIssues.pending, (state) => {
       state.getIssueState.loading = true;
       state.getIssueState.done = false;
       state.getIssueState.err = null;
     });
     builder.addCase(getIssues.fulfilled, (state, action) => {
+      state.issueList = action.payload;
       state.getIssueState.loading = false;
       state.getIssueState.done = true;
       state.getIssueState.err = null;
@@ -35,32 +30,19 @@ export const issueSlice = createSlice({
       state.getIssueState.done = false;
       state.getIssueState.err = action.payload;
     });
-    // });
   },
 });
 
-// export const { addTodo } = todoSlice.actions;
+export const { filterIssueList } = issueSlice.actions;
 
-const octokit = new Octokit({
-    auth: process.env.GET_ISSUE_TOKEN_JW,
-  });
-  
-export const getIssues = createAsyncThunk(,
-    // URL
-    async () => {
-        try {
-          await octokit.request("GET /repos/{owner}/{repo}/issues/{issue_number}", {
-            owner: "angluar",
-            repo: "angular-cli",
-            issue_number: "ISSUE_NUMBER",
-            per_page: 2,
-            sort: "updated",
-            direction: "asc",
-            headers: {
-              "X-GitHub-Api-Version": "2022-11-28",
-            },
-          });
-        } catch (err) {
-          console.error(err);
-        }
-    })
+export const getIssues = createAsyncThunk(
+  "issue/getIssues",
+  async ({ owner, repo }) => {
+    try {
+      const res = await AuthApi.getData(owner, repo);
+      return res.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+);

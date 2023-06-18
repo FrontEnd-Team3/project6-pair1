@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@octokit/core": "^4.2.1",
@@ -12,14 +11,22 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.4.0",
+    "html-react-parser": "^4.0.0",
     "msw": "^1.2.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-markdown": "^8.0.7",
     "react-redux": "^8.1.0",
     "react-router-dom": "^6.12.1",
-
     "react-scripts": "5.0.1",
+
+    "reactstrap": "^9.2.0",
+
+    "react-syntax-highlighter": "^15.5.0",
+
+    "redux": "^4.2.1",
     "redux-logger": "^3.0.6",
+    "remark-gfm": "^3.0.1",
     "styled-components": "^5.3.11",
     "styled-reset": "^4.4.7",
     "web-vitals": "^2.1.4"
