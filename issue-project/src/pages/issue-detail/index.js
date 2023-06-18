@@ -1,67 +1,137 @@
 import { useNavigate, useParams } from "react-router";
 import styled from "styled-components";
-import { useOneIssue } from "../../contexts/one-issue";
-const IssueDetailPage = () => {
-  // const getData = async () => {
-  //   await getIssues("angular", "angular-cli", 10);
-  // };
-  // console.log(getData());
+import { useSelector } from "react-redux";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
+const IssueDetailPage = () => {
   const navigate = useNavigate();
   const handlePageChange = () => {
     navigate("/");
   };
 
-  const { oneIssue } = useOneIssue();
   const params = useParams();
   const issueId = params.id;
-  console.log(params.id);
+  console.log("targetId", params.id);
 
-  console.log(oneIssue);
-  const imageURL = oneIssue.profileURL;
+  // param의 id와 값 일치하는 데이터 받아오기
+  const issueList = useSelector((state) => state.issue.issueList);
+  const target = [...issueList].find((el) => el.id === parseInt(issueId));
+  console.log("target", target);
+
+  const imageURL = target.user.avatar_url;
+  console.log("image", imageURL);
+
+  // markdown 문법 수정
+  // 주석 삭제
+  const removeHtmlComments = () => {
+    const visitor = (node) => {
+      if (
+        node.type === "html" &&
+        node.value.startsWith("<!--") &&
+        node.value.endsWith("-->")
+      ) {
+        return null;
+      }
+    };
+
+    return (tree) => {
+      tree.children = tree.children.filter((child) => visitor(child) !== null);
+    };
+  };
 
   return (
-    <>
+    <Box>
       <Container>
         <ImgContainer>
           <ProfileImg alt="img" src={imageURL} />
         </ImgContainer>
-        <UserID>{oneIssue.userName}</UserID>
+        <UserID>{target.user.login}</UserID>
         <IssueDetail>
-          <div>
-            <span>Create At: </span>
-            {oneIssue.date}
-            <span>Comment</span>
-            {oneIssue.commentCount}
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <IssueTitle>{target.title}</IssueTitle>
+            <IssueNumber>#{target.number}</IssueNumber>
           </div>
-          <DivisionLine />
-          <div>
-            <IssueNumber>#{issueId}</IssueNumber>
-            <IssueTitle>{oneIssue.title}</IssueTitle>
-          </div>
+          <DetailTop>
+            <StateBox>{target.state}</StateBox>
+            <div>
+              <span>opened this issue on</span>
+              {target.updated_at.split("T")[0]}
+            </div>
+            <div>|</div>
+            <div>
+              {target.comments}
+              <span>comments</span>
+            </div>
+          </DetailTop>
         </IssueDetail>
-        <IssueContent>
-          <span>{oneIssue.content}</span>
-        </IssueContent>
+        <IssueContentContainer>
+          <div>
+            <ReactMarkdown
+              children={target.body}
+              transformLinkUri={(uri) => uri.replace(/<!--.*?-->/g, "")}
+              remarkPlugins={[remarkGfm, removeHtmlComments]}
+              components={{
+                pre: ({ node, children, ...props }) => (
+                  <pre
+                    {...props}
+                    children={String(children).replace(/\n$/, "")}
+                    style={{
+                      borderLeft: "5px solid skyblue",
+                      padding: "2rem",
+                      lineHeight: "1.5rem",
+                      margin: "2rem auto",
+                    }}
+                  >
+                    {children}
+                  </pre>
+                ),
+                code({ node, inline, className, children, ...props }) {
+                  const match = /language-(\w+)/.exec(className || "");
+                  return !inline && match ? (
+                    <SyntaxHighlighter
+                      {...props}
+                      children={String(children).replace(/\n$/, "")}
+                      style={a11yDark}
+                      language={match[1]}
+                      PreTag="div"
+                    />
+                  ) : (
+                    <code {...props} className={className}>
+                      {children}
+                    </code>
+                  );
+                },
+              }}
+            />
+          </div>
+        </IssueContentContainer>
+        <BtnContainer>
+          <GoBackBtn onClick={() => handlePageChange()}>
+            {"Back to Main Page"}
+          </GoBackBtn>
+        </BtnContainer>
       </Container>
-      <div>
-        <GoBackBtn onClick={() => handlePageChange()}>
-          {"< 뒤로 돌아가기"}
-        </GoBackBtn>
-      </div>
-    </>
+    </Box>
   );
 };
 
 export default IssueDetailPage;
 
+const Box = styled.div`
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
 const Container = styled.div`
+  flex-grow: 2;
   background-color: lightgray;
-  height: transparent;
-  width: 900px;
-  position: absolute;
-  top: 100px;
-  left: 550px;
+  width: 59vw;
+  margin-left: 30vw;
+  margin-top: 55px;
   * {
     color: black;
   }
@@ -81,8 +151,8 @@ const UserID = styled.div`
   text-align: right;
   text-align: center;
   margin-top: 15px;
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 13px;
+  font-weight: 500;
 `;
 
 const IssueDetail = styled.div`
@@ -92,49 +162,84 @@ const IssueDetail = styled.div`
   justify-content: space-around;
   font-size: 16px;
   span {
-    font-weight: bold;
     margin: 10px;
   }
 `;
 
-const IssueNumber = styled.div`
-  font-weight: bold;
-  margin-bottom: 10px;
+const DetailTop = styled.div`
+  display: flex;
+  justify-content: center;
+  font-weight: 100;
+  * {
+    margin-right: 1vw;
+    margin-top: -40px;
+  }
+  div {
+    line-height: 20px;
+  }
 `;
 
 const IssueTitle = styled.div`
   padding-left: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  margin-right: 1vw;
 `;
 
-const IssueContent = styled.div`
+const IssueNumber = styled.div`
+  font-weight: 100;
+  color: gray;
+  font-size: 24px;
+`;
+
+const IssueContentContainer = styled.div`
   background-color: white;
-  width: 830px;
+  width: 54vw;
   height: transparent;
-  margin-left: 35px;
+  margin-left: 2.5vw;
   margin-bottom: 25px;
   padding: 20px;
   text-align: left;
   font-size: 12px;
   font-weight: 100;
   line-height: 20px;
-  text-align: center;
+  div {
+    display: block;
+    overflow: visible;
+  }
+  button {
+    margin-top: 10px;
+  }
+`;
+
+const BtnContainer = styled.div`
+  margin: 10px 100px;
+  margin-bottom: 20px;
 `;
 
 const GoBackBtn = styled.button`
   border: none;
-  background-color: transparent;
-  color: white;
-  font-size: 20px;
+  background-color: white;
+  color: black;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 12px;
   font-weight: 100;
   :hover {
-    text-decoration: underline solid 1px white;
+    text-decoration: underline solid 1px black;
   }
-  position: absolute;
-  bottom: 5px;
-  right: 450px;
+  position: relative;
+  bottom: 0px;
 `;
 
-const DivisionLine = styled.hr`
-  border: 1px solid black;
-  width: 80%;
+const StateBox = styled.div`
+  background-color: #1f883d;
+  color: white;
+  width: 80.63px;
+  height: 32px;
+  padding: 5px 12px;
+  padding-bottom: 10px;
+  font-size: 16px;
+  font-weight: 200;
+  border-radius: 2em;
 `;

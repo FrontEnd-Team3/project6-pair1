@@ -1,4 +1,4 @@
-import LoadingLogo from "../img/loading2.gif";
+import LoadingLogo from "../img/loading.gif";
 import styled from "styled-components";
 
 const LoadingPage = () => {

@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useLoading } from "../../contexts/loading";
 import LoadingPage from "../loading";
 import IssueList from "./list";
 import styled from "styled-components";
 
 import { useDispatch, useSelector } from "react-redux";
-import { getIssues } from "../../reducer/issue";
+import { filterIssueList, getIssues } from "../../reducer/issue";
 import { useIssueList } from "../../contexts/issueList";
 
 const IssueMainPage = () => {
-  // const { loading, setLoading } = useLoading();
   const { issueList, setIssueList } = useIssueList();
   const targetList = useSelector((state) => state.issue.issueList);
 
@@ -32,16 +30,10 @@ const IssueMainPage = () => {
   useEffect(() => {
     const fetchIssueList = async () => {
       try {
-        // setLoading(true);
-        // setTimeout(async () => {
-        //   const res = await AuthApi.getData("angular", "angular-cli").then(
-        //     setLoading(false)
-        //   );
         const res = dispatch(
           getIssues({ owner: "angular", repo: "angular-cli" })
         );
         console.log("res", res);
-        // }, 3000);
       } catch (err) {
         console.error(err);
       }
@@ -50,6 +42,7 @@ const IssueMainPage = () => {
   }, []);
 
   useEffect(() => {
+    console.log("targetList", targetList);
     const formattedIssueList = targetList.map((issue) => ({
       id: issue.id,
       userId: issue.twitter_username,
@@ -58,12 +51,15 @@ const IssueMainPage = () => {
       date: issue.created_at,
       updateDate: issue.updated_at,
       commentCount: issue.comments,
+
       profileURL: issue.user.avatar_url,
       userName: issue.user.login,
       content: issue.body,
       labels: issue.labels,
+
     }));
     setIssueList(formattedIssueList);
+    // dispatch(filterIssueList(formattedIssueList))
     console.log("issueList", issueList);
   }, [targetList]);
 
@@ -236,6 +232,7 @@ const LastBtn = styled.button`
 const PageBtn = styled.button`
   width: 50px;
   height: 20px;
+
   background-color: ${({ isSelected }) => (isSelected ? "white" : "black")};
   color: ${({ isSelected }) => (isSelected ? "black" : "white")};
   border-radius: 16px;
@@ -245,4 +242,5 @@ const PageBtn = styled.button`
     background-color: ${({ isSelected }) =>
       isSelected ? "white" : "rgb(90, 83, 83)"};
   }
+
 `;

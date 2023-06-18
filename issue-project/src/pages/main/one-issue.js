@@ -4,15 +4,13 @@ import { useOneIssue } from "../../contexts/one-issue";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-const OneIssue = ({ issue }) => {
-  const { setOneIssue } = useOneIssue();
 
+const OneIssue = ({ issue }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
 
   const HandleDetailPage = (id) => {
-    setOneIssue(issue);
     searchParams.delete("page");
     searchParams.delete("filter");
     navigate(`/detail/${id}`);
@@ -69,6 +67,7 @@ const OneIssue = ({ issue }) => {
           ))}
         </div>
       )}
+
     </Issue>
   );
 };
@@ -102,9 +101,9 @@ const Issue = styled.li`
   justify-content: center;
   padding: 0 10px;
   overflow: hidden;
-  transition: all 0.2s linear;
+  transition: all 0.1s linear;
   :hover {
-    transform: scale(1.05);
+    transform: scale(1.03);
   }
   div:nth-child(1) {
     font-weight: 900;
