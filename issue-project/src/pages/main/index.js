@@ -42,6 +42,7 @@ const IssueMainPage = () => {
   }, []);
 
   useEffect(() => {
+    console.log("targetList", targetList);
     const formattedIssueList = targetList.map((issue) => ({
       id: issue.id,
       number: issue.number,
