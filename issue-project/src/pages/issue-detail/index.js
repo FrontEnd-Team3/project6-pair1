@@ -50,9 +50,9 @@ const IssueDetailPage = () => {
         </ImgContainer>
         <UserID>{target.user.login}</UserID>
         <IssueDetail>
+          <IssueNumber>#{target.number}</IssueNumber>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <IssueTitle>{target.title}</IssueTitle>
-            <IssueNumber>#{target.number}</IssueNumber>
           </div>
           <DetailTop>
             <StateBox>{target.state}</StateBox>
@@ -135,6 +135,7 @@ const Container = styled.div`
   * {
     color: black;
   }
+  border-radius: 16px;
 `;
 
 const ImgContainer = styled.div`
@@ -172,7 +173,6 @@ const DetailTop = styled.div`
   font-weight: 100;
   * {
     margin-right: 1vw;
-    margin-top: -40px;
   }
   div {
     line-height: 20px;
@@ -194,6 +194,7 @@ const IssueNumber = styled.div`
 
 const IssueContentContainer = styled.div`
   background-color: white;
+  border-radius: 16px;
   width: 54vw;
   height: transparent;
   margin-left: 2.5vw;

@@ -1,9 +1,7 @@
 import { useLocation, useNavigate } from "react-router";
 import styled from "styled-components";
-import { useOneIssue } from "../../contexts/one-issue";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-
 
 const OneIssue = ({ issue }) => {
   const navigate = useNavigate();
@@ -67,7 +65,6 @@ const OneIssue = ({ issue }) => {
           ))}
         </div>
       )}
-
     </Issue>
   );
 };
