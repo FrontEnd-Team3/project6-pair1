@@ -1,7 +1,5 @@
 import styled from "styled-components";
 import github from "./githubLogo.png";
-import { Link } from "react-router-dom";
-
 function Header() {
   return (
     <Headeer>

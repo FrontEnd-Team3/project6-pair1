@@ -130,8 +130,8 @@ const Container = styled.div`
   flex-grow: 2;
   background-color: lightgray;
   width: 59vw;
-  margin-left: 30vw;
-  margin-top: 55px;
+  margin-left: 23vw;
+
   * {
     color: black;
   }
@@ -176,6 +176,9 @@ const DetailTop = styled.div`
   }
   div {
     line-height: 20px;
+  }
+  @media (max-width: 767px) {
+    display: none;
   }
 `;
 

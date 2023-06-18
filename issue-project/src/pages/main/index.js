@@ -56,7 +56,6 @@ const IssueMainPage = () => {
       userName: issue.user.login,
       content: issue.body,
       labels: issue.labels,
-
     }));
     setIssueList(formattedIssueList);
     // dispatch(filterIssueList(formattedIssueList))
@@ -120,7 +119,7 @@ const IssueMainPage = () => {
   return (
     <div>
       <SelectForm>
-        <Select>
+        <Select style={{ marginRight: "10px" }}>
           SORT{" "}
           <select value={sortOption} onChange={handleSortOptionChange}>
             <option value="created">CREATE</option>
@@ -189,13 +188,11 @@ const IssueMainPage = () => {
 export default IssueMainPage;
 
 const Pagenation = styled.div`
-  margin-left: 275px;
   margin-top: 40px;
   margin-bottom: 40px;
   display: flex;
   justify-content: center;
   @media (max-width: 767px) {
-    margin-left: 10px;
     margin-top: 40px;
     margin-bottom: 40px;
     display: flex;
@@ -204,15 +201,9 @@ const Pagenation = styled.div`
 `;
 
 const SelectForm = styled.div`
-  margin-left: 680px;
-  margin-top: 20px
+  margin-left: 5vw;
+  margin-top: 20px;
   margin-bottom: 20px;
-  @media (max-width: 1000px) {
-    margin-left: 40px;
-  }
-  @media (max-width: 767px) {
-    margin-left: 10px;
-  }
 `;
 
 const Select = styled.label`
