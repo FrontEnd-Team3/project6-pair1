@@ -139,13 +139,13 @@ const IssueMainPage = () => {
           </select>
         </Select>
       </div>
-      <div>
+      <List>
         {loading ? (
           <LoadingPage />
         ) : (
           <IssueList displayedIssues={displayedIssues} />
         )}
-      </div>
+      </List>
       <div>
         <LastBtn
           onClick={() => handlePageClick(1)}
@@ -196,6 +196,9 @@ const Select = styled.label`
   select {
     color: black;
   }
+`;
+const List = styled.div`
+  display: inline-block;
 `;
 
 const LastBtn = styled.button`
