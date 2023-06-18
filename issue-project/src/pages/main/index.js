@@ -61,7 +61,7 @@ const IssueMainPage = () => {
       profileURL: issue.user.avatar_url,
       userName: issue.user.login,
       content: issue.body,
-      taskDone: issue.taskDone,
+      labels: issue.labels,
     }));
     setIssueList(formattedIssueList);
     console.log("issueList", issueList);
@@ -123,24 +123,24 @@ const IssueMainPage = () => {
 
   return (
     <div>
-      <div>
+      <SelectForm>
         <Select>
-          정렬:{" "}
+          SORT{" "}
           <select value={sortOption} onChange={handleSortOptionChange}>
-            <option value="created">생성순</option>
-            <option value="updated">업데이트순</option>
-            <option value="comments">댓글순</option>
+            <option value="created">CREATE</option>
+            <option value="updated">UPDATE</option>
+            <option value="comments">COMMENT</option>
           </select>
         </Select>
         <Select>
-          보기:{" "}
+          SHOW:{" "}
           <select value={itemsPerPage} onChange={handleItemsPerPageChange}>
-            <option value={10}>10개 씩 보기</option>
-            <option value={20}>20개 씩 보기</option>
-            <option value={50}>50개 씩 보기</option>
+            <option value={10}>10 PER PAGE</option>
+            <option value={20}>20 PER PAGE</option>
+            <option value={50}>50 PER PAGE</option>
           </select>
         </Select>
-      </div>
+      </SelectForm>
       <div>
         {loading ? (
           <LoadingPage />
@@ -148,18 +148,18 @@ const IssueMainPage = () => {
           <IssueList displayedIssues={displayedIssues} />
         )}
       </div>
-      <div>
+      <Pagenation>
         <LastBtn
           onClick={() => handlePageClick(1)}
           disabled={currentPage === 1}
         >
-          맨처음
+          FIRST
         </LastBtn>
         <LastBtn
           onClick={() => handlePageClick(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          이전
+          PREV
         </LastBtn>
         {[...Array(totalPages)].map((_, index) => {
           const pageNumber = index + 1;
@@ -177,36 +177,72 @@ const IssueMainPage = () => {
           onClick={() => handlePageClick(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
-          다음
+          NEXT
         </LastBtn>
         <LastBtn
           onClick={() => handlePageClick(totalPages)}
           disabled={currentPage === totalPages}
         >
-          맨끝
+          LAST
         </LastBtn>
-      </div>
+      </Pagenation>
     </div>
   );
 };
 
 export default IssueMainPage;
 
+const Pagenation = styled.div`
+  margin-left: 275px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: center;
+`;
+
+const SelectForm = styled.div`
+  margin-left: 680px;
+  margin-top: 20px
+  margin-bottom: 20px;
+`;
+
 const Select = styled.label`
-  color: white;
-  margin: 20px;
-  select {
-    color: black;
-  }
+  width: 80px;
+  height: 20px;
+  background-color: ${({ isSelected }) => (isSelected ? "white" : "black")};
+  color: ${({ isSelected }) => (isSelected ? "black" : "white")};
+  border-radius: 16px;
+  border: 0.5px solid ${({ isSelected }) => (isSelected ? "black" : "white")};
+  font-size: 13px;
+  padding-left: 6px;
+  padding-top: 3px;
+  padding-bottom: 1px;
+  margin-bottom: 10px;
 `;
 
 const LastBtn = styled.button`
   width: 50px;
   height: 20px;
+  background-color: ${({ isSelected }) => (isSelected ? "white" : "black")};
+  color: ${({ isSelected }) => (isSelected ? "black" : "white")};
+  border-radius: 16px;
+  border: 0.5px solid ${({ isSelected }) => (isSelected ? "black" : "white")};
+  font-size: 13px;
+  :hover {
+    background-color: rgb(90, 83, 83);
+  }
 `;
 
 const PageBtn = styled.button`
   width: 50px;
   height: 20px;
-  background-color: ${({ isSelected }) => (isSelected ? "blue" : "grey")};
+  background-color: ${({ isSelected }) => (isSelected ? "white" : "black")};
+  color: ${({ isSelected }) => (isSelected ? "black" : "white")};
+  border-radius: 16px;
+  border: 0.5px solid ${({ isSelected }) => (isSelected ? "black" : "white")};
+  font-size: 13px;
+  :hover {
+    background-color: ${({ isSelected }) =>
+      isSelected ? "white" : "rgb(90, 83, 83)"};
+  }
 `;

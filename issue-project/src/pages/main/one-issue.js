@@ -1,6 +1,8 @@
 import { useLocation, useNavigate } from "react-router";
 import styled from "styled-components";
 import { useOneIssue } from "../../contexts/one-issue";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const OneIssue = ({ issue }) => {
   const { setOneIssue } = useOneIssue();
@@ -8,6 +10,7 @@ const OneIssue = ({ issue }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
+
   const HandleDetailPage = (id) => {
     setOneIssue(issue);
     searchParams.delete("page");
@@ -15,6 +18,7 @@ const OneIssue = ({ issue }) => {
     navigate(`/detail/${id}`);
   };
 
+  //날짜 영어로 변경하는 로직 구글링함
   const getRelativeTime = (updateDate) => {
     const currentDate = new Date();
     const issueDate = new Date(updateDate);
@@ -44,13 +48,41 @@ const OneIssue = ({ issue }) => {
       <div>
         #{issue.number} updated {getRelativeTime(issue.updateDate)} by{" "}
         {issue.userName}
+        <ReactMarkdown children={issue.label} remarkPlugins={[remarkGfm]} />
       </div>
-      <div>comment count: {issue.commentCount}</div>
+      {issue.labels && (
+        <div>
+          {issue.labels.map((label) => (
+            <Label
+              key={label.id}
+              className="Label"
+              style={{
+                backgroundColor: `#${label.color}`,
+                color:
+                  parseInt(label.color.replace("#", ""), 16) > 0xffffff / 2
+                    ? "black"
+                    : "white",
+              }}
+            >
+              {label.name}
+            </Label>
+          ))}
+        </div>
+      )}
     </Issue>
   );
 };
 
 export default OneIssue;
+
+const Label = styled.span`
+  height: 21px;
+  padding: 3px;
+  border: px solid white;
+  border-radius: 12px;
+  color: black;
+  font-size: 12px;
+`;
 
 const Issue = styled.li`
   height: 150px;
@@ -60,7 +92,7 @@ const Issue = styled.li`
   border: 0.5px solid white;
   color: white;
   margin: 10px 0px;
-  margin-left: 35%;
+  margin-left: 500px;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
