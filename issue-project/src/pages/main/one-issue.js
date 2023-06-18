@@ -86,7 +86,7 @@ const Label = styled.span`
 
 const Issue = styled.li`
   height: 150px;
-  width: 700px;
+  width: 860px;
   background-color: #0e1117;
   border-radius: 16px;
   border: 0.5px solid white;
@@ -110,5 +110,13 @@ const Issue = styled.li`
     font-weight: 900;
     font-size: 17px;
     color: white;
+  }
+  @media (max-width: 1200px) {
+    width: 700px;
+    margin-left: 200px;
+  }
+  @media (max-width: 767px) {
+    width: 600px;
+    margin-left: 25px;
   }
 `;

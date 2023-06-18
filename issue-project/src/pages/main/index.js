@@ -198,12 +198,25 @@ const Pagenation = styled.div`
   margin-bottom: 40px;
   display: flex;
   justify-content: center;
+  @media (max-width: 767px) {
+    margin-left: 10px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+  }
 `;
 
 const SelectForm = styled.div`
   margin-left: 680px;
   margin-top: 20px
   margin-bottom: 20px;
+  @media (max-width: 1000px) {
+    margin-left: 40px;
+  }
+  @media (max-width: 767px) {
+    margin-left: 10px;
+  }
 `;
 
 const Select = styled.label`
@@ -231,6 +244,12 @@ const LastBtn = styled.button`
   :hover {
     background-color: rgb(90, 83, 83);
   }
+  @media (max-width: 767px) {
+    width: 45px;
+    height: 20px;
+    font-size: 12px;
+    text-align: center;
+  }
 `;
 
 const PageBtn = styled.button`
@@ -244,5 +263,11 @@ const PageBtn = styled.button`
   :hover {
     background-color: ${({ isSelected }) =>
       isSelected ? "white" : "rgb(90, 83, 83)"};
+  }
+  @media (max-width: 767px) {
+    width: 45px;
+    height: 20px;
+    font-size: 12px;
+    text-align: center;
   }
 `;
