@@ -11,8 +11,8 @@ const GlobalStyles = createGlobalStyle`
         height: 100%;
     }
     body{
+        background-color: #0E1117;
         height: 100%;
-        background-color: black;
     }
     button {
         border: none;
